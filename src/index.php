@@ -1,30 +1,28 @@
 <?php
-require_once '../vendor/autoload.php';
+include "../vendor/autoload.php";
 
-use UserManager;
-use conf;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+use Biviall\ComposerTp\Manager\UserManager;
 
-$logger = new Logger('main');
-$logger->pushHandler(new StreamHandler(__DIR__ . '/../log/app.log', Logger::INFO));
-$logger->info('First Message');
-$logger->debug('Second Message');
-print("1) OK <br/>");
 $loader = new FilesystemLoader('../templates');
-print("2) OK <br/>");
 $twig = new Environment($loader, ['cache' => '../cache']);
-print("3) OK <br/>");
+
 try {
+    include "conf.php";
     $db = new PDO($dsn, $user, $password);
     $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
     $userManager = new UserManager($db);
-    echo $twig->render('base.html.twig', ['title' => 'Liste des utilisateurs', 'Users' => $userManager-getAll()]);
-} catch (\Throwable $th) {
-    //throw $th;
+    $users = $userManager->getAll();
+
+
+
+} catch (PDOException $e) {
+    print('<br/>Erreur de connexion : ' . $e->getMessage());
 }
-
-
+echo $twig->render('index.html.twig', [
+    'title' => 'Liste des utilisateurs', 
+    'users' => $users,
+]);
 ?>
+

@@ -1,5 +1,8 @@
 <?php
-namespace Entities;
+namespace Biviall\ComposerTp\Entities;
+
+include "../vendor/autoload.php";
+
 class User
 {   private $_id;
     private $_email;

@@ -1,10 +1,14 @@
 <?php
-include ("User.php");
+namespace Biviall\ComposerTp\Manager;
+
+use PDO;
+use Biviall\ComposerTp\Entities\User;
+
+include "../vendor/autoload.php";
+
 class UserManager{
 
     private $_db;
-    private $_logger;
-
 
     public function __construct($db)
     {
@@ -18,23 +22,25 @@ class UserManager{
     public function add(User $user):bool
     {
         $query = $this->_db->prepare('INSERT INTO users (email,`password`,`role`) VALUES (:email,:password,:role);');
-        print_r($user);
         $query->bindValue(':email', $user->getEmail());
         $query->bindValue(':password', $user->getPassword());
         $query->bindValue(':role', $user->getRole());
         return $query->execute();
     }
-    public function delete(User $perso)
+    public function delete(User $user)
     {
-
+        $query = $this->_db->prepare('DELETE FROM `users`WHERE id=:id;');
+        $query->bindValue(':id', $user->getId());
+        return $query->execute();
+        
     }
     public function getOne(int $id)
     {
-        $sth = $this->_db->prepare('SELECT id,nom,`force`, degats,niveau, experience FROM personnages WHERE id= ?;');
+        $sth = $this->_db->prepare('SELECT * FROM USERS WHERE id = ?');
         $sth-> execute(array($id));
         $ligne = $sth->fetch();
-        $perso = new Personnage($ligne);
-        return $perso;
+        $user = new User($ligne);  
+        return $user; 
     }
     public function getAll():array
     {
@@ -48,9 +54,14 @@ class UserManager{
          }
          return $listeUsers;
     }
-    public function update(Personnages $perso):bool
+    public function update(User $user)
     {
-
+            $query = $this->_db->prepare("UPDATE users SET email = :email, password = :password , role = :role WHERE id =:id;");
+            $query->bindValue(':id', $user->getId());
+            $query->bindValue(':email', $user->getEmail());
+            $query->bindValue(':password', $user->getPassword());
+            $query->bindValue(':role', $user->getRole());
+            $query->execute();
     }
 }
 ?>
