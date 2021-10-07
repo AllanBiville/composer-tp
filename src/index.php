@@ -25,4 +25,5 @@ echo $twig->render('index.html.twig', [
     'users' => $users,
 ]);
 ?>
-
+include header en twig
+methode try catch

@@ -27,7 +27,7 @@ class UserManager{
         $query->bindValue(':role', $user->getRole());
         return $query->execute();
     }
-    public function delete(User $user)
+    public function delete(User $user):bool
     {
         $query = $this->_db->prepare('DELETE FROM `users`WHERE id=:id;');
         $query->bindValue(':id', $user->getId());
@@ -54,14 +54,14 @@ class UserManager{
          }
          return $listeUsers;
     }
-    public function update(User $user)
+    public function update(User $user):bool
     {
             $query = $this->_db->prepare("UPDATE users SET email = :email, password = :password , role = :role WHERE id =:id;");
             $query->bindValue(':id', $user->getId());
             $query->bindValue(':email', $user->getEmail());
             $query->bindValue(':password', $user->getPassword());
             $query->bindValue(':role', $user->getRole());
-            $query->execute();
+            return $query->execute();
     }
 }
 ?>
